@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">im_demo</string>
+    <string name="tip_input_account">请输入账号</string>
+    <string name="tip_input_pwd">请输入密码</string>
+    <string name="login_text">登陆</string>
+
+
+</resources>
