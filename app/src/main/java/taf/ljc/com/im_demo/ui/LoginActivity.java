@@ -1,20 +1,17 @@
 package taf.ljc.com.im_demo.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
 import taf.ljc.com.im_demo.R;
 import taf.ljc.com.im_demo.service.Actions;
 import taf.ljc.com.im_demo.service.ImServices;
 import taf.ljc.com.im_demo.service.Params;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
     private TextView mAccountTv, mPwdTv;
 
     @Override

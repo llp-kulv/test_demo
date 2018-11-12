@@ -6,15 +6,22 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 
 import java.net.InetAddress;
 
+import taf.ljc.com.im_demo.service.conn.XmppManager;
+import taf.ljc.com.im_demo.util.Flog;
+
 public class ImServices extends IntentService implements Actions, Params {
     private static final String TAG = "ImServices";
+    private XmppManager mManager;
 
     public ImServices() {
         super(TAG);
+        mManager = new XmppManager();
     }
 
     @Override
@@ -36,22 +43,41 @@ public class ImServices extends IntentService implements Actions, Params {
     }
 
     private void login(@NonNull String account, @NonNull String pwd) {
-        buildConnect();
-    }
+        mManager.login(account, pwd, new ConnectionListener() {
+            @Override
+            public void connected(XMPPConnection connection) {
+                Flog.d(TAG, "connected isConnected" + connection.isConnected());
+            }
 
-    private void buildConnect() {
-        try {
-            XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
-            builder.setXmppDomain("ljcopenfire");
-            builder.setHostAddress(InetAddress.getByName("192.168.1.11"));
-            //default port 5222
-            builder.setPort(5222);
-            builder.setDebuggerEnabled(true);
-            builder.setCompressionEnabled(true);
-            builder.setSendPresence(false);
-            builder.setUsernameAndPassword("test1", "123456");
-        }catch (Exception e){
+            @Override
+            public void authenticated(XMPPConnection connection, boolean resumed) {
+                Flog.d(TAG, "connected resumed" + resumed);
+            }
 
-        }
+            @Override
+            public void connectionClosed() {
+                Flog.d(TAG, "connectionClosed");
+            }
+
+            @Override
+            public void connectionClosedOnError(Exception e) {
+                Flog.d(TAG, "connectionClosedOnError");
+            }
+
+            @Override
+            public void reconnectionSuccessful() {
+                Flog.d(TAG, "reconnectionSuccessful");
+            }
+
+            @Override
+            public void reconnectingIn(int seconds) {
+                Flog.d(TAG, "reconnectingIn");
+            }
+
+            @Override
+            public void reconnectionFailed(Exception e) {
+                Flog.d(TAG, "reconnectionFailed e:" + e);
+            }
+        });
     }
 }
