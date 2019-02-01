@@ -3,6 +3,7 @@ package taf.ljc.com.im_demo.service;
 import android.accounts.Account;
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -35,14 +36,30 @@ public class ImServices extends IntentService implements Actions, Params {
             return;
         }
 
+        final ResultReceiver callBackListener = (ResultReceiver) intent.getExtras().get(PARAM_RESULT_LISTENER);
+
         if (TextUtils.equals(ACTION_LOGIN, action)) {
             String account = intent.getStringExtra(PARAM_ACCOUNT);
             String pwd = intent.getStringExtra(PARAM_PASSWORD);
-            login(account, pwd);
+            login(account, pwd, callBackListener);
+        } else if (TextUtils.equals(ACTION_LOGOUT, action)) {
+            logout(callBackListener);
+        } else if (TextUtils.equals(ACTION_SEND_MESSAGE, action)) {
+            String content = intent.getStringExtra(PARAM_CONTENT);
+            String to = intent.getStringExtra(PARAM_TO);
+            sendMessage(content, to, callBackListener);
         }
     }
 
-    private void login(@NonNull String account, @NonNull String pwd) {
+    private void sendMessage(String content, @NonNull String to, ResultReceiver resultReceiver) {
+        mManager.sendMessage(content, to, resultReceiver);
+    }
+
+    private void logout(ResultReceiver resultReceiver) {
+        mManager.logout(resultReceiver);
+    }
+
+    private void login(@NonNull String account, @NonNull String pwd, ResultReceiver resultReceiver) {
         mManager.login(account, pwd, new ConnectionListener() {
             @Override
             public void connected(XMPPConnection connection) {
